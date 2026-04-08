@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Erros Operacionais — Cellfy</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#0a0a0a;color:#fff;min-height:100vh;padding:0}
+.header{background:#111;border-bottom:1px solid #222;padding:16px 24px;display:flex;align-items:center;gap:12px}
+.header img{height:32px}
+.header-divider{width:1px;height:24px;background:#333}
+.header-title{font-size:13px;color:#888}
+.container{padding:32px 24px;max-width:640px;margin:0 auto}
+.form-card{background:#111;border:1px solid #222;border-radius:16px;padding:2rem}
+.form-header{margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid #222}
+.form-header h2{font-size:18px;font-weight:600;color:#fff}
+.form-header p{font-size:13px;color:#666;margin-top:4px}
+.field{margin-bottom:1rem}
+.field label{display:block;font-size:12px;font-weight:500;color:#888;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px}
+.field input,.field select,.field textarea{width:100%;padding:10px 12px;font-size:14px;border:1px solid #222;border-radius:8px;background:#0a0a0a;color:#fff;font-family:inherit;transition:border .15s}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:#7c3aed}
+.field select option{background:#111}
+.field textarea{resize:vertical;min-height:80px;line-height:1.5}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tipo-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tipo-btn{padding:10px 12px;font-size:13px;border:1px solid #222;border-radius:8px;background:#0a0a0a;color:#888;cursor:pointer;text-align:left;transition:all .15s}
+.tipo-btn:hover{border-color:#444;color:#fff}
+.tipo-btn.sel{background:#1e1033;border-color:#7c3aed;color:#a855f7;font-weight:500}
+.grav-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.grav-btn{padding:10px 8px;font-size:13px;border:1px solid #222;border-radius:8px;background:#0a0a0a;color:#888;cursor:pointer;text-align:center;font-weight:500;transition:all .15s}
+.grav-btn.baixa.sel{background:#0d2a1a;border-color:#166534;color:#4ade80}
+.grav-btn.media.sel{background:#2a1f0d;border-color:#92400e;color:#fbbf24}
+.grav-btn.alta.sel{background:#2a0d0d;border-color:#991b1b;color:#f87171}
+.grav-btn.critica.sel{background:#7c3aed;border-color:#7c3aed;color:#fff}
+.rec-row{display:flex;gap:8px;margin-top:4px}
+.rec-btn{padding:8px 20px;font-size:13px;border:1px solid #222;border-radius:8px;background:#0a0a0a;color:#888;cursor:pointer;transition:all .15s}
+.rec-btn.sel{background:#1e1033;border-color:#7c3aed;color:#a855f7;font-weight:500}
+.outro-field{display:none;margin-top:8px}
+.submit-btn{width:100%;padding:12px;font-size:14px;font-weight:600;background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;border:none;border-radius:8px;cursor:pointer;margin-top:0.5rem;transition:opacity .15s}
+.submit-btn:hover{opacity:0.9}
+.submit-btn:disabled{opacity:0.5;cursor:not-allowed}
+.msg{display:none;border-radius:8px;padding:12px 16px;font-size:14px;margin-top:1rem}
+.msg-ok{background:#0d2a1a;border:1px solid #166534;color:#4ade80}
+.msg-erro{background:#2a0d0d;border:1px solid #991b1b;color:#f87171}
+.tag{display:inline-block;background:#1a1a2e;color:#a855f7;font-size:11px;padding:3px 8px;border-radius:20px;font-weight:500;margin-bottom:8px}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <img src="https://www.cellfy.com.br/cdn/shop/files/logo.png?v=1753990401" alt="Cellfy">
+  <div class="header-divider"></div>
+  <span class="header-title">Erros Operacionais</span>
+</div>
+
+<div class="container">
+<div class="form-card">
+  <div class="form-header">
+    <span class="tag">Interno</span>
+    <h2>Registro de erro operacional</h2>
+    <p>Registre erros para rastreamento e melhoria contínua</p>
+  </div>
+
+  <div class="field">
+    <label>Tipo de erro *</label>
+    <div class="tipo-grid">
+      <button class="tipo-btn sel" onclick="selTipo(this)">Manual (erro humano)</button>
+      <button class="tipo-btn" onclick="selTipo(this)">Sistêmico (plataforma)</button>
+      <button class="tipo-btn" onclick="selTipo(this)">Comunicação</button>
+      <button class="tipo-btn" onclick="selTipo(this)">Processo</button>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Gravidade *</label>
+    <div class="grav-grid">
+      <button class="grav-btn baixa" onclick="selGrav(this,'Baixa')">Baixa</button>
+      <button class="grav-btn media" onclick="selGrav(this,'Média')">Média</button>
+      <button class="grav-btn alta" onclick="selGrav(this,'Alta')">Alta</button>
+      <button class="grav-btn critica" onclick="selGrav(this,'Crítica')">Crítica</button>
+    </div>
+  </div>
+
+  <div class="field-row">
+    <div class="field">
+      <label>Registrado por *</label>
+      <select id="f-registra">
+        <option value="">Selecione...</option>
+        <option>Roseane</option>
+        <option>Sarah</option>
+        <option>Larissa</option>
+        <option>Rafaela</option>
+        <option>Supervisor</option>
+        <option>Outro</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Dono do erro *</label>
+      <select id="f-dono" onchange="toggleOutro('outro-dono',this)">
+        <option value="">Selecione...</option>
+        <option>RMA</option>
+        <option>Logística</option>
+        <option>Atendimento / Suporte</option>
+        <option>T.I</option>
+        <option>Compras</option>
+        <option>Marketing</option>
+        <option>Cadastro</option>
+        <option>Outro</option>
+      </select>
+      <div class="outro-field" id="outro-dono">
+        <input type="text" id="f-dono-outro" placeholder="Especifique...">
+      </div>
+    </div>
+  </div>
+
+  <div class="field-row">
+    <div class="field">
+      <label>Canal/setor afetado *</label>
+      <select id="f-canal" onchange="toggleOutro('outro-canal',this)">
+        <option value="">Selecione...</option>
+        <option>RMA</option>
+        <option>Logística</option>
+        <option>Atendimento / Suporte</option>
+        <option>T.I</option>
+        <option>Compras</option>
+        <option>Marketing</option>
+        <option>Cadastro</option>
+        <option>Outro</option>
+      </select>
+      <div class="outro-field" id="outro-canal">
+        <input type="text" id="f-canal-outro" placeholder="Especifique...">
+      </div>
+    </div>
+    <div class="field">
+      <label>Escalar para *</label>
+      <select id="f-escalar">
+        <option value="">Selecione...</option>
+        <option>Gestão</option>
+        <option>Área Responsável</option>
+        <option>Não escalar</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="field-row">
+    <div class="field">
+      <label>Nº do pedido afetado</label>
+      <input type="text" id="f-pedido" placeholder="Ex: ML-123456">
+    </div>
+    <div class="field">
+      <label>É recorrente?</label>
+      <div class="rec-row">
+        <button class="rec-btn" onclick="selRec(this,'Sim')">Sim</button>
+        <button class="rec-btn sel" onclick="selRec(this,'Não')">Não</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Status</label>
+    <select id="f-status">
+      <option value="Em aberto">Em aberto</option>
+      <option value="Em análise">Em análise</option>
+      <option value="Resolvido">Resolvido</option>
+      <option value="Cancelado">Cancelado</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label>Descrição do erro *</label>
+    <textarea id="f-descricao" placeholder="Descreva o que aconteceu, como foi identificado e qual o impacto..."></textarea>
+  </div>
+
+  <div class="field">
+    <label>Ação corretiva sugerida</label>
+    <textarea id="f-acao" placeholder="O que pode ser feito para evitar que se repita..."></textarea>
+  </div>
+
+  <button class="submit-btn" id="btn-enviar" onclick="enviarForm()">Registrar erro</button>
+  <div class="msg msg-ok" id="msg-ok">✅ Erro registrado com sucesso!</div>
+  <div class="msg msg-erro" id="msg-erro">❌ Preencha todos os campos obrigatórios.</div>
+</div>
+</div>
+
+<script>
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycbwAT-GE-9qKlYqCY6cnCYYGGpyxP3qqkXmHL_R0rsVlDsTExdwQUfIKBD077dtu2wXpRw/exec";
+let tipoSel="Manual (erro humano)";
+let gravSel="";
+let recSel="Não";
+
+function selTipo(btn){
+  document.querySelectorAll('.tipo-btn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');tipoSel=btn.textContent;
+}
+function selGrav(btn,val){
+  document.querySelectorAll('.grav-btn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');gravSel=val;
+}
+function selRec(btn,val){
+  document.querySelectorAll('.rec-btn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');recSel=val;
+}
+function toggleOutro(id,sel){
+  document.getElementById(id).style.display=sel.value==='Outro'?'block':'none';
+}
+function getNow(){
+  const d=new Date();
+  return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')+':'+String(d.getSeconds()).padStart(2,'0');
+}
+function enviarForm(){
+  const registra=document.getElementById('f-registra').value;
+  const donoSel=document.getElementById('f-dono').value;
+  const dono=donoSel==='Outro'?document.getElementById('f-dono-outro').value.trim()||'Outro':donoSel;
+  const canalSel=document.getElementById('f-canal').value;
+  const canal=canalSel==='Outro'?document.getElementById('f-canal-outro').value.trim()||'Outro':canalSel;
+  const escalar=document.getElementById('f-escalar').value;
+  const descricao=document.getElementById('f-descricao').value.trim();
+  if(!registra||!donoSel||!canalSel||!escalar||!descricao||!gravSel){
+    document.getElementById('msg-erro').style.display='block';
+    document.getElementById('msg-ok').style.display='none';
+    setTimeout(()=>document.getElementById('msg-erro').style.display='none',4000);
+    return;
+  }
+  const btn=document.getElementById('btn-enviar');
+  btn.disabled=true;btn.textContent='Registrando...';
+  const payload={
+    dataHora:getNow(),tipo:tipoSel,gravidade:gravSel,registra,dono,canal,escalar,
+    pedido:document.getElementById('f-pedido').value.trim()||'—',
+    recorrente:recSel,status:document.getElementById('f-status').value,
+    descricao,acao:document.getElementById('f-acao').value.trim()||'—'
+  };
+  fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+  .then(()=>{
+    document.getElementById('msg-ok').style.display='block';
+    document.getElementById('msg-erro').style.display='none';
+    document.getElementById('f-registra').value='';
+    document.getElementById('f-dono').value='';
+    document.getElementById('f-canal').value='';
+    document.getElementById('f-escalar').value='';
+    document.getElementById('f-descricao').value='';
+    document.getElementById('f-pedido').value='';
+    document.getElementById('f-acao').value='';
+    document.getElementById('f-status').value='Em aberto';
+    document.getElementById('outro-dono').style.display='none';
+    document.getElementById('outro-canal').style.display='none';
+    document.querySelectorAll('.tipo-btn').forEach((b,i)=>b.classList.toggle('sel',i===0));
+    document.querySelectorAll('.grav-btn').forEach(b=>b.classList.remove('sel'));
+    document.querySelectorAll('.rec-btn').forEach((b,i)=>b.classList.toggle('sel',i===1));
+    tipoSel='Manual (erro humano)';gravSel='';recSel='Não';
+    setTimeout(()=>document.getElementById('msg-ok').style.display='none',5000);
+  })
+  .catch(()=>{
+    document.getElementById('msg-erro').style.display='block';
+    setTimeout(()=>document.getElementById('msg-erro').style.display='none',4000);
+  })
+  .finally(()=>{btn.disabled=false;btn.textContent='Registrar erro';});
+}
+</script>
+</body>
+</html>
